@@ -1,0 +1,23 @@
+- hosts: all
+  become: yes
+  user: vagrant
+  gather_facts: no
+  pre_tasks:
+  - name: 'update apt repos'
+    raw: 'apt-get update'
+  - name: 'installing python'
+    raw: 'apt-get install -y python3'
+  roles:
+  - { role: install-k8s, tags: ["install_k8s_role"]}
+
+- hosts: k8s-master
+  become: yes
+  user: vagrant
+  roles:
+  - { role: create-cluster, tags: ["create_cluster_role"]}
+
+- hosts: k8s-workers
+  become: yes
+  user: vagrant
+  roles:
+  - { role: join-workers, tags: ["join_workers_role"]}
